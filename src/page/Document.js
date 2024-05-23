@@ -70,7 +70,7 @@ class Document extends Component {
     });
 
     const options = {
-      selectableRows: false,
+      selectableRows: "none",
       elevation: 0,
       rowsPerPage: 10,
       rowsPerPageOption: [5, 10],
