@@ -59,8 +59,8 @@ class Login extends Component {
                 <div className="card-body p-0">
                   {/* Nested Row within Card Body */}
                   <div className="row p-5">
-                    <div className="col-lg-8 mx-auto">
-                      <div className="p-5">
+                    <div className="col-sm-8 mx-auto">
+                      <div className="py-2">
                         <div className="text-center">
                           <h1 className="h4 text-gray-900 mb-4">
                             Welcome Back!
