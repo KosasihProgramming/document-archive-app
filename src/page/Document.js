@@ -12,6 +12,16 @@ const columns = [
   "Link",
 ];
 
+const categories = [
+  { category: "Surat Keputusan" },
+  { category: "Standar Operasional Prosedur" },
+  { category: "Kontrak Kerja" },
+  { category: "Perizinan" },
+  { category: "Kontrak Kerjasama" },
+  { category: "Surat Masuk" },
+  { category: "Surat Keluar" },
+];
+
 class Document extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +30,9 @@ class Document extends Component {
       apiKey: process.env.REACT_APP_APIKEY,
       documents: [],
       isLoading: false,
+      isFilter: false,
+      filter: "",
+      documentsFiltered: [],
     };
   }
 
@@ -45,6 +58,28 @@ class Document extends Component {
     }
   };
 
+  handleSelecet = async (e) => {
+    await new Promise((resolve) => {
+      this.setState({ filter: e.target.value }, resolve);
+    });
+
+    const { filter } = this.state;
+
+    if (filter != "Semua") {
+      await this.handleFilter();
+    } else {
+      this.setState({ isFilter: false });
+    }
+  };
+
+  handleFilter = () => {
+    const { documents, filter } = this.state;
+    const filteredDocuments = documents.filter(
+      (document) => document.kategoriDokumen === filter
+    );
+    this.setState({ documentsFiltered: filteredDocuments, isFilter: true });
+  };
+
   formatDate(dateString) {
     const date = new Date(dateString);
     const options = { day: "numeric", month: "long", year: "numeric" };
@@ -52,8 +87,27 @@ class Document extends Component {
   }
 
   render() {
-    const { documents, isLoading } = this.state;
+    const { documents, isLoading, isFilter, documentsFiltered } = this.state;
     const data = documents.map((document) => {
+      const tanggal = this.formatDate(document.timeStamp);
+      return [
+        tanggal,
+        document.email,
+        document.nomorDokumen,
+        document.judulDokumen,
+        document.deskripsiDokumen,
+        document.kategoriDokumen,
+        document.bagian,
+        <a
+          href={document.link}
+          className="btn btn-primary btn-sm"
+          target="_blank">
+          Lihat
+        </a>,
+      ];
+    });
+
+    const dataFilter = documentsFiltered.map((document) => {
       const tanggal = this.formatDate(document.timeStamp);
       return [
         tanggal,
@@ -85,13 +139,43 @@ class Document extends Component {
         <h1 className="h3 mb-2 text-gray-800">Data Dokumen</h1>
         <div className="card shadow mb-4">
           <div className="card-header py-3">
-            <h6 className="m-0 font-weight-bold text-primary">
-              Tabel kriteria
-            </h6>
+            <div className="row d-flex align-items-center">
+              <div className="col-lg-3">
+                <h6 className="m-0 font-weight-bold text-primary">
+                  Tabel Dokumen Kosasih
+                </h6>
+              </div>
+              <div className="col-lg-4">
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  onChange={this.handleSelecet}>
+                  <option selected="" value="Semua">
+                    Semua Kategori
+                  </option>
+                  {categories.map((category, index) => (
+                    <option key={index} value={category.category}>
+                      {category.category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
           <div className="card-body">
             {isLoading ? ( // Tampilkan pesan atau indikator loading jika isLoading true
               <p>Memuat data...</p>
+            ) : isFilter ? (
+              <MUIDataTable
+                className="table table-bordered"
+                id="dataTable"
+                width="100%"
+                cellSpacing={0}
+                title={"Dokument Table"}
+                data={dataFilter}
+                columns={columns}
+                options={options}
+              />
             ) : (
               <div className="table-responsive">
                 <MUIDataTable
