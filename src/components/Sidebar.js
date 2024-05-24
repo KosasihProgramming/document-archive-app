@@ -4,12 +4,12 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 const navigation = [
   {
     nama: "Data Dokumen",
-    link: "/documents",
+    link: "/dashboard/documents",
     icon: "fa-file",
   },
   {
     nama: "Data Kosong",
-    link: "/kosong",
+    link: "/dashboard/kosong",
     icon: "fa-folder",
   },
 ];
@@ -23,7 +23,7 @@ const Sidebar = () => {
       {/* Sidebar - Brand */}
       <a
         className="sidebar-brand d-flex align-items-center justify-content-center"
-        href="/">
+        href="/dashboard">
         <div className="sidebar-brand-icon rotate-n-15">
           <i className="fas fa-laugh-wink" />
         </div>
@@ -32,8 +32,11 @@ const Sidebar = () => {
       {/* Divider */}
       <hr className="sidebar-divider my-0" />
       {/* Nav Item - Dashboard */}
-      <li className={`nav-item ${location.pathname === "/" ? "active" : ""}`}>
-        <Link to="/" className="nav-link">
+      <li
+        className={`nav-item ${
+          location.pathname === "/dashboard" ? "active" : ""
+        }`}>
+        <Link to="/dashboard" className="nav-link">
           <i className="fas fa-fw fa-tachometer-alt" />
           <span>Dashboard</span>
         </Link>

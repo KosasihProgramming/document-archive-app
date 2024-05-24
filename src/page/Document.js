@@ -12,10 +12,6 @@ const columns = [
   "Link",
 ];
 
-const options = {
-  filterType: "checkbox",
-};
-
 class Document extends Component {
   constructor(props) {
     super(props);

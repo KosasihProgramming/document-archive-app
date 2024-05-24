@@ -1,6 +1,31 @@
 import React from "react";
+import Swal from "sweetalert2";
+import { IoIosLogOut } from "react-icons/io";
 
 const Navbar = () => {
+  const onClick = () => {
+    Swal.fire({
+      title: "Yakin ingin keluar?",
+      showCancelButton: true,
+      confirmButtonText: "Keluar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        sessionStorage.removeItem("isLoggedIn");
+        sessionStorage.removeItem("userEmail");
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Berhasil logout",
+          showConfirmButton: false,
+          timer: 1500,
+          didClose: () => {
+            window.location.href = "/";
+          },
+        });
+      }
+    });
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -49,45 +74,19 @@ const Navbar = () => {
           <div className="topbar-divider d-none d-sm-block" />
           {/* Nav Item - User Information */}
           <li className="nav-item dropdown no-arrow">
-            <a
-              className="nav-link dropdown-toggle"
-              href="/"
+            <div
+              onClick={onClick}
+              className="nav-link dropdown-toggle border-0 bg-light"
+              href="#"
               id="userDropdown"
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-              <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                Admin
-              </span>
-              <img className="img-profile rounded-circle" src="" />
-            </a>
-            {/* Dropdown - User Information */}
-            <div
-              className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-              aria-labelledby="userDropdown">
-              <a className="dropdown-item" href="/">
-                <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400" />
-                Profile
-              </a>
-              <div className="dropdown-divider" />
-              <a
-                className="dropdown-item"
-                href="{{ route('logout') }}"
-                data-toggle="modal"
-                data-target="#logoutModal">
-                <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" />
-                {"{"}
-                {"{"} __('Logout') {"}"}
-                {"}"}
-              </a>
-              <form
-                id="logout-form"
-                action="{{ route('logout') }}"
-                method="POST"
-                className="d-none">
-                @csrf
-              </form>
+              <span className="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+              <div className="img-profile rounded-circle">
+                <IoIosLogOut />
+              </div>
             </div>
           </li>
         </ul>
