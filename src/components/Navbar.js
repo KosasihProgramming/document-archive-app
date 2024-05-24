@@ -83,8 +83,10 @@ const Navbar = () => {
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false">
-              <span className="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-              <div className="img-profile rounded-circle">
+              <div className="d-flex align-items-start">
+                <span className="mr-2 d-none d-lg-inline text-gray-600 small">
+                  Keluar
+                </span>
                 <IoIosLogOut />
               </div>
             </div>

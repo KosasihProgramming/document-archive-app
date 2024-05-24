@@ -19,6 +19,7 @@ class Document extends Component {
       baseURL: process.env.REACT_APP_BASEURL,
       apiKey: process.env.REACT_APP_APIKEY,
       documents: [],
+      isLoading: false,
     };
   }
 
@@ -29,6 +30,7 @@ class Document extends Component {
   getAllDocument = async () => {
     const { baseURL, apiKey } = this.state;
     try {
+      this.setState({ isLoading: true });
       const response = await fetch(`${baseURL}/${apiKey}/exec`);
       const data = await response.json();
       if (data && Array.isArray(data.documents)) {
@@ -38,6 +40,8 @@ class Document extends Component {
       }
     } catch (error) {
       console.error("Error fetching documents:", error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
 
@@ -48,7 +52,7 @@ class Document extends Component {
   }
 
   render() {
-    const { documents } = this.state;
+    const { documents, isLoading } = this.state;
     const data = documents.map((document) => {
       const tanggal = this.formatDate(document.timeStamp);
       return [
@@ -59,8 +63,11 @@ class Document extends Component {
         document.deskripsiDokumen,
         document.kategoriDokumen,
         document.bagian,
-        <a href={document.link} target="_blank">
-          link
+        <a
+          href={document.link}
+          className="btn btn-primary btn-sm"
+          target="_blank">
+          Lihat
         </a>,
       ];
     });
@@ -77,19 +84,28 @@ class Document extends Component {
       <>
         <h1 className="h3 mb-2 text-gray-800">Data Dokumen</h1>
         <div className="card shadow mb-4">
+          <div className="card-header py-3">
+            <h6 className="m-0 font-weight-bold text-primary">
+              Tabel kriteria
+            </h6>
+          </div>
           <div className="card-body">
-            <div className="table-responsive">
-              <MUIDataTable
-                className="table table-bordered"
-                id="dataTable"
-                width="100%"
-                cellSpacing={0}
-                title={"Dokument Table"}
-                data={data}
-                columns={columns}
-                options={options}
-              />
-            </div>
+            {isLoading ? ( // Tampilkan pesan atau indikator loading jika isLoading true
+              <p>Memuat data...</p>
+            ) : (
+              <div className="table-responsive">
+                <MUIDataTable
+                  className="table table-bordered"
+                  id="dataTable"
+                  width="100%"
+                  cellSpacing={0}
+                  title={"Dokument Table"}
+                  data={data}
+                  columns={columns}
+                  options={options}
+                />
+              </div>
+            )}
           </div>
         </div>
       </>

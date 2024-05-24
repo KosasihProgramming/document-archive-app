@@ -1,16 +1,19 @@
 import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
+import { IoMdDocument } from "react-icons/io";
+import { GrDocumentNotes } from "react-icons/gr";
 
 const navigation = [
   {
     nama: "Data Dokumen",
     link: "/dashboard/documents",
-    icon: "fa-file",
+    icon: <IoMdDocument />,
   },
   {
     nama: "Data Kosong",
     link: "/dashboard/kosong",
-    icon: "fa-folder",
+    icon: <GrDocumentNotes />,
   },
 ];
 
@@ -37,8 +40,10 @@ const Sidebar = () => {
           location.pathname === "/dashboard" ? "active" : ""
         }`}>
         <Link to="/dashboard" className="nav-link">
-          <i className="fas fa-fw fa-tachometer-alt" />
-          <span>Dashboard</span>
+          <div className="d-flex align-items-start">
+            <MdDashboard />
+            <span className="fw-bold ms-2">Dashboard</span>
+          </div>
         </Link>
       </li>
       {/* Divider */}
@@ -52,9 +57,11 @@ const Sidebar = () => {
           className={`nav-item ${
             location.pathname === nav.link ? "active" : ""
           }`}>
-          <NavLink to={nav.link} className="nav-link">
-            <i className={`fas fa-fw ${nav.icon}`} />
-            <span>{nav.nama}</span>
+          <NavLink to={nav.link} className="nav-link ">
+            <div className="d-flex align-items-start">
+              {nav.icon}
+              <span className="fw-bold ms-2">{nav.nama}</span>
+            </div>
           </NavLink>
         </li>
       ))}

@@ -11,6 +11,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import NoData from "./page/NoData";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function AppContent() {
                 <>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/dashboard/documents" element={<Document />} />
+                  <Route path="/dashboard/kosong" element={<NoData />} />
                 </>
               ) : (
                 <>
