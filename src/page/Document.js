@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import MUIDataTable from "mui-datatables";
 
 const columns = [
+  "#",
   "Tanggal",
   "Email",
   "Nomor Dokumen",
@@ -9,6 +10,7 @@ const columns = [
   "Deskripsi",
   "Kategori",
   "Bagian",
+  "Tanggal Terbit",
   "Link",
 ];
 
@@ -37,6 +39,8 @@ class Document extends Component {
   }
 
   componentDidMount = () => {
+    const { baseURL, apiKey } = this.state;
+    console.log(baseURL, apiKey);
     this.getAllDocument();
   };
 
@@ -88,9 +92,13 @@ class Document extends Component {
 
   render() {
     const { documents, isLoading, isFilter, documentsFiltered } = this.state;
-    const data = documents.map((document) => {
+
+    console.log(documents);
+
+    const data = documents.map((document, index) => {
       const tanggal = this.formatDate(document.timeStamp);
       return [
+        index + 1,
         tanggal,
         document.email,
         document.nomorDokumen,
@@ -98,6 +106,7 @@ class Document extends Component {
         document.deskripsiDokumen,
         document.kategoriDokumen,
         document.bagian,
+        document.tanggalTerbit,
         <a
           href={document.link}
           className="btn btn-primary btn-sm"
@@ -107,9 +116,10 @@ class Document extends Component {
       ];
     });
 
-    const dataFilter = documentsFiltered.map((document) => {
+    const dataFilter = documentsFiltered.map((document, index) => {
       const tanggal = this.formatDate(document.timeStamp);
       return [
+        index + 1,
         tanggal,
         document.email,
         document.nomorDokumen,
@@ -117,6 +127,7 @@ class Document extends Component {
         document.deskripsiDokumen,
         document.kategoriDokumen,
         document.bagian,
+        document.tanggalTerbit,
         <a
           href={document.link}
           className="btn btn-primary btn-sm"
@@ -129,7 +140,7 @@ class Document extends Component {
     const options = {
       selectableRows: "none",
       elevation: 0,
-      rowsPerPage: 10,
+      rowsPerPage: 5,
       rowsPerPageOption: [5, 10],
       filterDate: new Date().toLocaleDateString(),
     };
