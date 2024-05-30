@@ -12,6 +12,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import NoData from "./page/NoData";
+// import TestSidebar from "./components/TestSidebar";
+import { useState } from "react";
 
 function App() {
   return (
@@ -26,12 +28,23 @@ function AppContent() {
   const isLoginPage = location.pathname === "/";
   const isLoggedIn = sessionStorage.getItem("isLoggedIn");
 
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+  };
+
   return (
-    <div id="wrapper">
-      {!isLoginPage && <Sidebar />}
+    <div id="wrapper" className={isSidebarVisible ? "" : "toggled"}>
+      {!isLoginPage && (
+        <Sidebar
+          isSidebarVisible={isSidebarVisible}
+          toggleSidebar={toggleSidebar}
+        />
+      )}
       <div id="content-wrapper" className="d-flex flex-column">
         <div id="content">
-          {!isLoginPage && <Navbar />}
+          {!isLoginPage && <Navbar toggleSidebar={toggleSidebar} />}
           <div className="container-fluid">
             <Routes>
               {isLoggedIn ? (
