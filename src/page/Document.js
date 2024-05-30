@@ -1,18 +1,24 @@
 import React, { Component } from "react";
 import MUIDataTable from "mui-datatables";
 import Card from "../components/Card";
+import { MdOutlineArrowOutward } from "react-icons/md";
+import { FiMinus } from "react-icons/fi";
+import { FaRegEye } from "react-icons/fa";
+import { IoMdAdd } from "react-icons/io";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { format, parse } from "date-fns";
+import { id } from "date-fns/locale";
 
 const columns = [
   "#",
-  "Tanggal",
-  "Email",
   "Nomor Dokumen",
   "Judul Dokumen",
-  "Deskripsi",
   "Kategori",
   "Bagian",
   "Tanggal Terbit",
-  "Link",
+  "Status",
+  "Aksi",
 ];
 
 const categories = [
@@ -37,6 +43,8 @@ class Document extends Component {
       filter: "",
       documentsFiltered: [],
       isMobile: window.innerWidth <= 768,
+      documentInfo: {},
+      modalShow: false,
     };
     this.handleResize = this.handleResize.bind(this);
   }
@@ -50,8 +58,6 @@ class Document extends Component {
 
   componentDidMount = () => {
     window.addEventListener("resize", this.handleResize);
-    const { baseURL, apiKey } = this.state;
-    console.log(baseURL, apiKey);
     this.getAllDocument();
   };
 
@@ -80,7 +86,7 @@ class Document extends Component {
 
     const { filter } = this.state;
 
-    if (filter != "Semua") {
+    if (filter !== "Semua") {
       await this.handleFilter();
     } else {
       this.setState({ isFilter: false });
@@ -95,6 +101,10 @@ class Document extends Component {
     this.setState({ documentsFiltered: filteredDocuments, isFilter: true });
   };
 
+  detailInfo = (document) => {
+    this.setState({ documentInfo: document, modalShow: true });
+  };
+
   formatDate(dateString) {
     const date = new Date(dateString);
     const options = { day: "numeric", month: "long", year: "numeric" };
@@ -102,50 +112,81 @@ class Document extends Component {
   }
 
   render() {
-    const { documents, isLoading, isFilter, documentsFiltered, isMobile } =
-      this.state;
-
-    console.log(documents);
+    const {
+      documents,
+      isLoading,
+      isFilter,
+      documentsFiltered,
+      isMobile,
+      modalShow,
+      documentInfo,
+    } = this.state;
 
     const data = documents.map((document, index) => {
-      const tanggal = this.formatDate(document.timeStamp);
+      const tanggalTerbit = this.formatDate(document.tanggalTerbit);
       return [
         index + 1,
-        tanggal,
-        document.email,
         document.nomorDokumen,
         document.judulDokumen,
-        document.deskripsiDokumen,
         document.kategoriDokumen,
         document.bagian,
-        document.tanggalTerbit,
-        <a
-          href={document.link}
-          className="btn btn-primary btn-sm"
-          target="_blank">
-          Lihat
-        </a>,
+        tanggalTerbit,
+        document.status,
+        <div>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={document.link}
+            class="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
+            <span class="icon text-white-50">
+              <MdOutlineArrowOutward className="text-gray-300 mb-1" />
+            </span>
+            <span class="text">Link</span>
+          </a>
+
+          <button
+            onClick={() => this.detailInfo(document)}
+            class="btn btn-info btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <FaRegEye className="text-gray-300 mb-1" />
+            </span>
+            <span class="text">Detail</span>
+          </button>
+        </div>,
       ];
     });
 
     const dataFilter = documentsFiltered.map((document, index) => {
-      const tanggal = this.formatDate(document.timeStamp);
+      const tanggalTerbit = this.formatDate(document.tanggalTerbit);
       return [
         index + 1,
-        tanggal,
-        document.email,
         document.nomorDokumen,
         document.judulDokumen,
-        document.deskripsiDokumen,
         document.kategoriDokumen,
         document.bagian,
-        document.tanggalTerbit,
-        <a
-          href={document.link}
-          className="btn btn-primary btn-sm"
-          target="_blank">
-          Lihat
-        </a>,
+        tanggalTerbit,
+        document.status,
+        <div>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={document.link}
+            class="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
+            <span class="icon text-white-50">
+              <MdOutlineArrowOutward className="text-gray-300 mb-1" />
+            </span>
+            <span class="text">Link</span>
+          </a>
+
+          <button
+            onClick={() => this.detailInfo(document)}
+            class="btn btn-info btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <FaRegEye className="text-gray-300 mb-1" />
+            </span>
+            <span class="text">Detail</span>
+          </button>
+        </div>,
       ];
     });
 
@@ -153,7 +194,7 @@ class Document extends Component {
       selectableRows: "none",
       elevation: 0,
       rowsPerPage: 5,
-      rowsPerPageOption: [5, 10],
+      rowsPerPageOption: [5, 10, 15],
       filterDate: new Date().toLocaleDateString(),
     };
 
@@ -186,6 +227,18 @@ class Document extends Component {
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div className="col-lg-3 ml-auto">
+                    <a
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://docs.google.com/forms/d/e/1FAIpQLSdzqRS4BmGaDf-E57lsV2qMFI1auYt77jsuCbMOGNTSoWwivw/viewform"
+                      class="btn btn-primary btn-icon-split ml-auto">
+                      <span class="icon text-white-50">
+                        <IoMdAdd />
+                      </span>
+                      <span class="text">Tambah dokumen</span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -221,9 +274,45 @@ class Document extends Component {
             </div>
           </>
         )}
+        <DetailInfo
+          show={modalShow}
+          onHide={() => this.setState({ modalShow: false })}
+          documentInfo={documentInfo}
+        />
       </>
     );
   }
+}
+
+function DetailInfo(props) {
+  const { show, onHide, documentInfo } = props;
+
+  const formatDate = (dateString) => {
+    try {
+      const date = parse(dateString, "M/d/yyyy", new Date());
+      return format(date, "dd MMMM yyyy", { locale: id });
+    } catch (error) {
+      return dateString;
+    }
+  };
+
+  return (
+    <Modal show={show} onHide={onHide} size="lg" centered>
+      <Modal.Header closeButton></Modal.Header>
+      <Modal.Body>
+        <h4 className="text-primary fw-bold">{documentInfo.judulDokumen}</h4>
+        <h6>
+          {documentInfo.kategoriDokumen} <FiMinus />{" "}
+          {formatDate(documentInfo.tanggalTerbit)}
+        </h6>
+        <p>{documentInfo.deskripsiDokumen}</p>
+        <p className="text-primary">{documentInfo.bagian}</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
 }
 
 export default Document;

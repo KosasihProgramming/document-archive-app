@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { collection, doc, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/Firebase";
 
 class Dashboard extends Component {
