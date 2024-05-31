@@ -2,6 +2,7 @@ import { Component } from "react";
 import withRouter from "../withRoutes";
 import { GrUpdate } from "react-icons/gr";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const categories = [
   { value: "Surat Keputusan" },
@@ -110,15 +111,59 @@ class DocumentEdit extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
+    const url =
+      "https://script.google.com/macros/s/AKfycbwFMxf2A9p14GF8odm6oydAlwMS-iJ_yv3nvmFWXQ1mn2p-qB2Sdf1bUAbPMet7XLvzZg/exec";
     try {
-      console.log({ document: this.state.document });
-      const response = await axios.post(
-        "https://script.google.com/macros/s/AKfycbx1FB5HDuITSNLXkcawec9ci0FIhHG1ESyvnsfjTzPmYn8zmgEyF-U_OoEdsXCupXINkg/exec",
-        this.state.document
-      );
-      console.log("Response:", response.data);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.state.document),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Update successful:", data);
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil",
+          text: "Dokumen berhasil diperbarui",
+          timer: 1500,
+          showConfirmButton: false,
+          onClose: () => {
+            window.location.href = "/dashboard/documents";
+          },
+        });
+      } else {
+        const errorData = await response.json();
+        console.error(
+          "Failed to update document:",
+          errorData.error || response.statusText
+        );
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: "Gagal memperbarui dokumen. Silakan coba lagi.",
+          timer: 1500,
+          showConfirmButton: false,
+          onClose: () => {
+            window.location.href = "/dashboard/documents";
+          },
+        });
+      }
     } catch (error) {
       console.error("Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: "Terjadi kesalahan saat memperbarui dokumen. Silakan coba lagi.",
+        timer: 1500,
+        showConfirmButton: false,
+        onClose: () => {
+          window.location.href = "/dashboard/documents";
+        },
+      });
     }
   };
 
