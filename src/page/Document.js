@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import MUIDataTable from "mui-datatables";
 import Card from "../components/Card";
-import { MdOutlineArrowOutward } from "react-icons/md";
+import { MdOutlineArrowOutward, MdEdit } from "react-icons/md";
 import { FiMinus } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
@@ -36,7 +36,8 @@ class Document extends Component {
     super(props);
     this.state = {
       baseURL: process.env.REACT_APP_BASEURL,
-      apiKey: process.env.REACT_APP_APIKEY,
+      apiKey:
+        "AKfycbwU1kRwcGkFvRf78lJJ-LH1g_hw5yVrT-sIuARaIou1kUyS6_xN4gPEB26uxLFoRfloNw",
       documents: [],
       isLoading: false,
       isFilter: false,
@@ -63,12 +64,14 @@ class Document extends Component {
 
   getAllDocument = async () => {
     const { baseURL, apiKey } = this.state;
+    console.log(`${baseURL}/${apiKey}/exec`);
     try {
       this.setState({ isLoading: true });
       const response = await fetch(`${baseURL}/${apiKey}/exec`);
       const data = await response.json();
       if (data && Array.isArray(data.documents)) {
         this.setState({ documents: data.documents.slice(1) });
+        console.log(data.documents.slice(1));
       } else {
         console.error("Fetched data does not contain a valid documents array");
       }
@@ -103,6 +106,15 @@ class Document extends Component {
 
   detailInfo = (document) => {
     this.setState({ documentInfo: document, modalShow: true });
+  };
+
+  handleEdit = (document) => {
+    const link = document.link;
+    const splitURL = link.split("?");
+    const params = splitURL[1];
+    const splitParams = params.split("=");
+    const id = splitParams[1];
+    window.location.href = `documents/${id}/edit`;
   };
 
   formatDate(dateString) {
@@ -146,11 +158,20 @@ class Document extends Component {
 
           <button
             onClick={() => this.detailInfo(document)}
-            class="btn btn-info btn-icon-split btn-sm">
+            class="btn btn-info btn-icon-split btn-sm mb-2">
             <span class="icon text-white-50">
               <FaRegEye className="text-gray-300 mb-1" />
             </span>
             <span class="text">Detail</span>
+          </button>
+
+          <button
+            onClick={() => this.handleEdit(document)}
+            class="btn btn-warning btn-icon-split btn-sm">
+            <span class="icon text-white-50">
+              <MdEdit className="text-gray-300 mb-1" />
+            </span>
+            <span class="text">Edit</span>
           </button>
         </div>,
       ];
@@ -233,11 +254,11 @@ class Document extends Component {
                       rel="noopener noreferrer"
                       target="_blank"
                       href="https://docs.google.com/forms/d/e/1FAIpQLSdzqRS4BmGaDf-E57lsV2qMFI1auYt77jsuCbMOGNTSoWwivw/viewform"
-                      class="btn btn-primary btn-icon-split ml-auto">
-                      <span class="icon text-white-50">
+                      className="btn btn-primary btn-icon-split ml-auto">
+                      <span className="icon text-white-50">
                         <IoMdAdd />
                       </span>
-                      <span class="text">Tambah dokumen</span>
+                      <span className="text">Tambah dokumen</span>
                     </a>
                   </div>
                 </div>

@@ -14,6 +14,7 @@ import {
 import NoData from "./page/NoData";
 // import TestSidebar from "./components/TestSidebar";
 import { useState } from "react";
+import DocumentEdit from "./page/DocumentEdit";
 
 function App() {
   return (
@@ -51,6 +52,10 @@ function AppContent() {
                 <>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/dashboard/documents" element={<Document />} />
+                  <Route
+                    path="/dashboard/documents/:id/edit"
+                    element={<DocumentEdit />}
+                  />
                   <Route path="/dashboard/kosong" element={<NoData />} />
                 </>
               ) : (
