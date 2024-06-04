@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { IoMdDocument } from "react-icons/io";
 import { GrDocumentNotes } from "react-icons/gr";
+import { FaFaceGrinTongueWink } from "react-icons/fa6";
 
 const navigation = [
   {
@@ -30,7 +31,9 @@ const Sidebar = ({ isSidebarVisible, toggleSidebar }) => {
         className="sidebar-brand d-flex align-items-center justify-content-center"
         href="/dashboard">
         <div className="sidebar-brand-icon rotate-n-15">
-          <i className="fas fa-laugh-wink" />
+          <i className="fas">
+            <FaFaceGrinTongueWink className="fas" />
+          </i>
         </div>
         <div className="sidebar-brand-text mx-3">Kosasih</div>
       </a>
@@ -75,8 +78,12 @@ const Sidebar = ({ isSidebarVisible, toggleSidebar }) => {
         <button
           className="rounded-circle border-0"
           id="sidebarToggle"
+          onClick={toggleSidebar}></button>
+        {/* <button
+          className="rounded-circle border-0"
+          id="sidebarToggle"
           onClick={toggleSidebar}
-        />
+        /> */}
       </div>
     </ul>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import Swal from "sweetalert2";
 import { IoIosLogOut } from "react-icons/io";
+import { FaBars } from "react-icons/fa";
 
 const Navbar = ({ toggleSidebar }) => {
   const onClick = () => {
@@ -34,7 +35,9 @@ const Navbar = ({ toggleSidebar }) => {
           id="sidebarToggleTop"
           className="btn btn-link d-md-none rounded-circle mr-3"
           onClick={toggleSidebar}>
-          <i className="fa fa-bars" />
+          <i className="fa">
+            <FaBars />
+          </i>
         </button>
         {/* Topbar Navbar */}
         <ul className="navbar-nav ml-auto">

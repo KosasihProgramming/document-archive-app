@@ -6,7 +6,8 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 const baseURL = process.env.REACT_APP_BASEURL;
-const apiKey = process.env.REACT_APP_APIKEY;
+const apiKey =
+  "AKfycbwU1kRwcGkFvRf78lJJ-LH1g_hw5yVrT-sIuARaIou1kUyS6_xN4gPEB26uxLFoRfloNw";
 
 const Card = () => {
   const [documents, setDocuments] = useState([]);

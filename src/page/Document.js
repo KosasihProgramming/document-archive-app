@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import MUIDataTable from "mui-datatables";
 import Card from "../components/Card";
-import { MdOutlineArrowOutward, MdEdit } from "react-icons/md";
+import { MdOutlineArrowOutward } from "react-icons/md";
 import { FiMinus } from "react-icons/fi";
 import { FaRegEye } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
@@ -29,6 +29,7 @@ const categories = [
   { category: "Kontrak Kerjasama" },
   { category: "Surat Masuk" },
   { category: "Surat Keluar" },
+  { category: "Lainnya" },
 ];
 
 class Document extends Component {
@@ -64,7 +65,6 @@ class Document extends Component {
 
   getAllDocument = async () => {
     const { baseURL, apiKey } = this.state;
-    console.log(`${baseURL}/${apiKey}/exec`);
     try {
       this.setState({ isLoading: true });
       const response = await fetch(`${baseURL}/${apiKey}/exec`);
@@ -87,10 +87,15 @@ class Document extends Component {
       this.setState({ filter: e.target.value }, resolve);
     });
 
+    console.log(this.state.filter);
     const { filter } = this.state;
 
     if (filter !== "Semua") {
-      await this.handleFilter();
+      if (filter === "Lainnya") {
+        this.handleFilterLainnya();
+      } else {
+        this.handleFilter();
+      }
     } else {
       this.setState({ isFilter: false });
     }
@@ -101,6 +106,27 @@ class Document extends Component {
     const filteredDocuments = documents.filter(
       (document) => document.kategoriDokumen === filter
     );
+    this.setState({ documentsFiltered: filteredDocuments, isFilter: true });
+  };
+
+  handleFilterLainnya = () => {
+    const { documents } = this.state;
+    const excludedCategories = [
+      "Surat Keputusan",
+      "Standar Operasional Prosedur",
+      "Kontrak Kerja",
+      "Perizinan",
+      "Kontrak Kerjasama",
+      "Surat Masuk",
+      "Surat Keluar",
+    ];
+
+    const filteredDocuments = documents.filter(
+      (document) => !excludedCategories.includes(document.kategoriDokumen)
+    );
+
+    console.log({ filter: filteredDocuments });
+
     this.setState({ documentsFiltered: filteredDocuments, isFilter: true });
   };
 
@@ -149,29 +175,20 @@ class Document extends Component {
             target="_blank"
             rel="noopener noreferrer"
             href={document.link}
-            class="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
-            <span class="icon text-white-50">
+            className="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
+            <span className="icon text-white-50">
               <MdOutlineArrowOutward className="text-gray-300 mb-1" />
             </span>
-            <span class="text">Link</span>
+            <span className="text">Link</span>
           </a>
 
           <button
             onClick={() => this.detailInfo(document)}
-            class="btn btn-info btn-icon-split btn-sm mb-2">
-            <span class="icon text-white-50">
+            className="btn btn-info btn-icon-split btn-sm mb-2">
+            <span className="icon text-white-50">
               <FaRegEye className="text-gray-300 mb-1" />
             </span>
-            <span class="text">Detail</span>
-          </button>
-
-          <button
-            onClick={() => this.handleEdit(document)}
-            class="btn btn-warning btn-icon-split btn-sm">
-            <span class="icon text-white-50">
-              <MdEdit className="text-gray-300 mb-1" />
-            </span>
-            <span class="text">Edit</span>
+            <span className="text">Detail</span>
           </button>
         </div>,
       ];
@@ -192,11 +209,11 @@ class Document extends Component {
             target="_blank"
             rel="noopener noreferrer"
             href={document.link}
-            class="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
-            <span class="icon text-white-50">
+            className="btn btn-primary btn-icon-split btn-sm mr-2 mb-2">
+            <span className="icon text-white-50">
               <MdOutlineArrowOutward className="text-gray-300 mb-1" />
             </span>
-            <span class="text">Link</span>
+            <span className="text">Link</span>
           </a>
 
           <button
@@ -239,9 +256,7 @@ class Document extends Component {
                       className="form-select"
                       aria-label="Default select example"
                       onChange={this.handleSelecet}>
-                      <option selected="" value="Semua">
-                        Semua Kategori
-                      </option>
+                      <option value="Semua">Semua Kategori</option>
                       {categories.map((category, index) => (
                         <option key={index} value={category.category}>
                           {category.category}
@@ -317,14 +332,35 @@ function DetailInfo(props) {
     }
   };
 
+  const renderStatus = (status) => {
+    if (status === "Masih Berlaku") {
+      return (
+        <span className="ml-3 p-2 bg-primary rounded text-white">{status}</span>
+      );
+    } else if (status === "Tidak Berlaku") {
+      return (
+        <span className="ml-3 p-2 bg-danger rounded text-white">{status}</span>
+      );
+    } else {
+      return (
+        <span className="ml-3 p-2 bg-warning rounded text-white">
+          Belum diketahui
+        </span>
+      );
+    }
+  };
+
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
-      <Modal.Header closeButton></Modal.Header>
+      <Modal.Header closeButton>
+        Nomor Dokumen: {documentInfo.nomorDokumen}
+      </Modal.Header>
       <Modal.Body>
         <h4 className="text-primary fw-bold">{documentInfo.judulDokumen}</h4>
-        <h6>
+        <h6 className="d-flex align-items-center">
           {documentInfo.kategoriDokumen} <FiMinus />{" "}
-          {formatDate(documentInfo.tanggalTerbit)}
+          {formatDate(documentInfo.tanggalTerbit)}{" "}
+          {renderStatus(documentInfo.status)}
         </h6>
         <p>{documentInfo.deskripsiDokumen}</p>
         <p className="text-primary">{documentInfo.bagian}</p>

@@ -1,7 +1,6 @@
 import { Component } from "react";
 import withRouter from "../withRoutes";
 import { GrUpdate } from "react-icons/gr";
-import axios from "axios";
 import Swal from "sweetalert2";
 
 const categories = [
@@ -358,7 +357,8 @@ class DocumentEdit extends Component {
                   src={`${document.link}/preview`}
                   width="100%"
                   height="480"
-                  allow="autoplay"></iframe>
+                  allow="autoplay"
+                  title="Deskripsi singkat tentang konten yang di-embed"></iframe>
               </div>
             </div>
           </div>
